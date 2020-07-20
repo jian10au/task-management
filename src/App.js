@@ -14,12 +14,17 @@ import { createTask, editTask } from './actions/index';
 // };
 
 class App extends Component {
+  // just by looking at the data you pass to the onCreateTask and onStatusChange function
+  // it seems to me there is a undeniable preference for us to wrap all the data into object
+  // into the event handler function and redux action
+  // {title, description} -- create
+  // {status} which will be {params:{status:status}} within the action - edit
   onCreateTask = ({ title, description }) => {
     this.props.dispatch(createTask({ title, description }));
   };
 
-  onStatusChange = ({ taskId, status }) => {
-    this.props.dispatch(editTask({ taskId, status }));
+  onStatusChange = (id, status) => {
+    this.props.dispatch(editTask(id, { status }));
   };
 
   render() {

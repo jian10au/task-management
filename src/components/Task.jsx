@@ -1,15 +1,18 @@
 import React from 'react';
+
+const TASK_STATUSES = ['Unstarted', 'In Progress', 'Completed'];
+
 const Task = (props) => {
   return (
     <div className="task">
       <div className="task­header">
         <label htmlFor={props.task.id}>Change Status:</label>
         <select
+          value={props.task.status}
+          // only after I add the above line of code, the app start to work as expected why
           onChange={(event) => {
-            props.onStatusChange({
-              taskId: props.task.id,
-              status: event.target.value,
-            });
+            console.log('event triggered');
+            props.onStatusChange(props.task.id, event.target.value);
           }}
           name="status"
           id={props.task.id}

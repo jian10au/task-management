@@ -5,8 +5,9 @@ import App from './App';
 import { createStore } from 'redux';
 import tasks from './reducers';
 import { Provider } from 'react-redux';
+import { devToolsEnhancer } from 'redux-devtools-extension';
 
-const store = createStore(tasks);
+const store = createStore(tasks, devToolsEnhancer());
 
 const mockTasks = [
   {

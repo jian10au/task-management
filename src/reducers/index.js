@@ -1,4 +1,5 @@
 import { uniqueId } from '../actions';
+import { bindActionCreators } from 'redux';
 
 const mockTasks = [
   {
@@ -19,12 +20,21 @@ export default function tasks(state = { tasks: mockTasks }, action) {
     case 'CREATE_TASK':
       return { tasks: state.tasks.concat(action.payload) };
     case 'EDIT_TASK':
-      const selectedTask = state.tasks.find(
-        (task) => task.id === action.payload.id
-      );
-
-      selectedTask.status = action.payload.status;
-      return { tasks: { ...state.tasks, selectedTask } };
+      return {
+        tasks: state.tasks.map((task) => {
+          if (task.id === action.payload.id) {
+            // const updateTask = task;
+            // return { ...updateTask, status: action.payload.status };
+            const updateTask = {
+              ...task,
+              ...action.payload.params,
+            };
+            return updateTask;
+            // or Object.assign({}, task, payload.params)
+          }
+          return task;
+        }),
+      };
     default:
       return state;
   }
