@@ -54,6 +54,7 @@ class TasksPage extends Component {
     });
   }
   render() {
+    console.log('rendered');
     return (
       <div className="task-list">
         <div className="task­-list-­header">

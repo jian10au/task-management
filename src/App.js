@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import TasksPage from './components/TasksPage';
 import { connect, useSelector } from 'react-redux';
-import { createTask, editTask } from './actions/index';
+import { createTask, editTask, fetchTasks } from './actions/index';
 
 // const App = (props) => {
 //   const tasks = useSelector((state) => state.tasks);
@@ -27,8 +27,12 @@ class App extends Component {
     this.props.dispatch(editTask(id, { status }));
   };
 
+  componentDidMount() {
+    console.log('mount and logged');
+    this.props.dispatch(fetchTasks());
+  }
+
   render() {
-    console.log('props from App: ', this.props);
     return (
       <div className="main­content">
         <TasksPage
