@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import TasksPage from './components/TasksPage';
-import { connect, useSelector } from 'react-redux';
-import { createTask, editTask, fetchTasks } from './actions/index';
-import FlashMessage from './components/FlashMessage';
+import React, { Component } from "react";
+import TasksPage from "./components/TasksPage";
+import { connect, useSelector } from "react-redux";
+import { createTask, editTask, fetchTasks, filterTasks } from "./actions/index";
+import FlashMessage from "./components/FlashMessage";
 
 // const App = (props) => {
 //   const tasks = useSelector((state) => state.tasks);
@@ -29,13 +29,18 @@ class App extends Component {
     this.props.dispatch(editTask(id, { status }));
   };
 
+  onSearch = (searchTerm) => {
+    // console.log(searchTerm);
+    this.props.dispatch(filterTasks(searchTerm));
+  };
+
   componentDidMount() {
-    console.log('mount and logged');
+    console.log("mount and logged");
     this.props.dispatch(fetchTasks());
   }
 
   render() {
-    console.log('App mounted', 'loading status:', this.props.isLoading);
+    console.log("App mounted", "loading status:", this.props.isLoading);
     if (this.props.isLoading) {
       return <div>Loading</div>;
     }
@@ -48,6 +53,7 @@ class App extends Component {
             tasks={this.props.tasks}
             onCreateTask={this.onCreateTask}
             onStatusChange={this.onStatusChange}
+            onSearch={this.onSearch}
           />
         </div>
       </div>
@@ -56,7 +62,13 @@ class App extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const { tasks, isLoading, error } = state.tasks;
+  const { isLoading, error, searchTerm } = state.tasks;
+
+  // the stage where we prepare the data for rendering is called selecting process
+  // in this case; the shape of the redux stroe does not have
+  const tasks = state.tasks.tasks.filter((task) => {
+    return task.title.match(new RegExp(searchTerm, "i"));
+  });
 
   return {
     tasks,

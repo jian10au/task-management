@@ -1,16 +1,18 @@
-import React, { Component } from 'react';
-import TaskList from './TaskList';
-const TASK_STATUSES = ['Unstarted', 'In Progress', 'Completed'];
+import React, { Component } from "react";
+import TaskList from "./TaskList";
+const TASK_STATUSES = ["Unstarted", "In Progress", "Completed"];
 
 class TasksPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showNewCardForm: false,
-      title: '',
-      description: '',
+      title: "",
+      description: "",
+      searchTerm: "",
     };
   }
+
   onTitleChange = (e) => {
     this.setState({ title: e.target.value });
   };
@@ -20,10 +22,15 @@ class TasksPage extends Component {
   resetForm() {
     this.setState({
       showNewCardForm: false,
-      title: '',
-      description: '',
+      title: "",
+      description: "",
     });
   }
+
+  onSearch = (e) => {
+    this.props.onSearch(e.target.value);
+  };
+
   onCreateTask = (e) => {
     e.preventDefault();
 
@@ -40,9 +47,13 @@ class TasksPage extends Component {
     this.setState({ showNewCardForm: !this.state.showNewCardForm });
   };
   renderTaskLists() {
-    const { tasks } = this.props;
+    //basically returns the task whose title matches with the search term store in the state;
+    //when you type in the state changes and the this function returns a new list and re-rendered
+
     return TASK_STATUSES.map((status) => {
-      const statusTasks = tasks.filter((task) => task.status === status);
+      const statusTasks = this.props.tasks.filter(
+        (task) => task.status === status
+      );
       return (
         <TaskList
           key={status}
@@ -54,10 +65,12 @@ class TasksPage extends Component {
     });
   }
   render() {
-    console.log('rendered');
     return (
       <div className="task-list">
         <div className="task­-list-­header">
+          <input onChange={this.onSearch} type="text" placeholder="Search..." />
+          <br />
+          <br />
           <button className="button button-­default" onClick={this.toggleForm}>
             + New task
           </button>
@@ -84,7 +97,7 @@ class TasksPage extends Component {
           </form>
         )}
         <div
-          style={{ display: 'flex', justifyContent: 'space-around' }}
+          style={{ display: "flex", justifyContent: "space-around" }}
           className="task­-lists"
         >
           {this.renderTaskLists()}

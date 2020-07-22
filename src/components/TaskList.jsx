@@ -1,5 +1,5 @@
-import React from 'react';
-import Task from './Task';
+import React from "react";
+import Task from "./Task";
 const TaskList = (props) => {
   return (
     <div className="task­list">

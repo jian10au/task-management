@@ -1,17 +1,26 @@
-import * as api from '../api/index';
-import { applyMiddleware } from 'redux';
+import * as api from "../api/index";
+import { applyMiddleware } from "redux";
 // import all available api method
+
+export function filterTasks(searchTerm) {
+  return {
+    type: "FILTER_TASKS",
+    payload: {
+      searchTerm,
+    },
+  };
+}
 
 function createTaskSucceeded(task) {
   return {
-    type: 'CREATE_TASK_SUCCEEDED',
+    type: "CREATE_TASK_SUCCEEDED",
     payload: {
       task,
     },
   };
 }
 
-export function createTask({ title, description, status = 'Unstarted' }) {
+export function createTask({ title, description, status = "Unstarted" }) {
   return (dispatch) => {
     api.createTask({ title, description, status }).then((resp) => {
       //you are sure that what gets returned is the task object ? {}
@@ -22,13 +31,13 @@ export function createTask({ title, description, status = 'Unstarted' }) {
 
 export function fetchTasksStarted() {
   return {
-    type: 'FETCH_TASKS_STARTED',
+    type: "FETCH_TASKS_STARTED",
   };
 }
 
 export function fetchTasksSucceeded(tasks) {
   return {
-    type: 'FETCH_TASKS_SUCCEEDED',
+    type: "FETCH_TASKS_SUCCEEDED",
     payload: {
       tasks,
     },
@@ -37,7 +46,7 @@ export function fetchTasksSucceeded(tasks) {
 
 export function fetchTasksFailed(error) {
   return {
-    type: 'FETCH_TASKS_FAILED',
+    type: "FETCH_TASKS_FAILED",
     payload: {
       error,
     },
@@ -55,8 +64,8 @@ export function fetchTasks() {
     api
       .fetchTasks()
       .then((resp) => {
-        // setTimeout(() => dispatch(fetchTasksSucceeded(resp.data)), 2000);
-        throw new Error('Oh noes! Unable to fetch tasks!');
+        setTimeout(() => dispatch(fetchTasksSucceeded(resp.data)), 2000);
+        // throw new Error('Oh noes! Unable to fetch tasks!');
       })
       .catch((err) => dispatch(fetchTasksFailed(err.message)));
   };
@@ -91,7 +100,7 @@ export function editTask(id, params) {
 
 export function editTaskSucceeded(task) {
   return {
-    type: 'EDIT_TASK_SUCCEEDED',
+    type: "EDIT_TASK_SUCCEEDED",
     payload: {
       task,
     },

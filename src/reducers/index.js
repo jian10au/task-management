@@ -2,6 +2,7 @@ const initialState = {
   tasks: [],
   isLoading: false,
   error: null,
+  searchTerm: "",
 };
 
 export default function tasks(state = initialState, action) {
@@ -12,17 +13,17 @@ export default function tasks(state = initialState, action) {
 
   //so when the redux app loads, it will triggers a init action
   switch (action.type) {
-    case 'CREATE_TASK':
+    case "CREATE_TASK":
       return { tasks: state.tasks.concat(action.payload) };
 
-    case 'FETCH_TASKS_STARTED': {
+    case "FETCH_TASKS_STARTED": {
       return {
         ...state,
         isLoading: true,
       };
     }
 
-    case 'FETCH_TASKS_SUCCEEDED': {
+    case "FETCH_TASKS_SUCCEEDED": {
       return {
         ...state,
         isLoading: false,
@@ -30,7 +31,7 @@ export default function tasks(state = initialState, action) {
       };
     }
 
-    case 'FETCH_TASKS_FAILED': {
+    case "FETCH_TASKS_FAILED": {
       return {
         ...state,
         isLoading: false,
@@ -38,7 +39,7 @@ export default function tasks(state = initialState, action) {
       };
     }
 
-    case 'CREATE_TASK_SUCCEEDED': {
+    case "CREATE_TASK_SUCCEEDED": {
       return {
         // no flag set in here indicating no setting flag for create-task at first
         ...state,
@@ -46,7 +47,7 @@ export default function tasks(state = initialState, action) {
       };
     }
 
-    case 'EDIT_TASK_SUCCEEDED': {
+    case "EDIT_TASK_SUCCEEDED": {
       return {
         tasks: state.tasks.map((task) => {
           if (task.id === action.payload.task.id) {
@@ -57,6 +58,9 @@ export default function tasks(state = initialState, action) {
       };
     }
 
+    case "FILTER_TASKS": {
+      return { ...state, searchTerm: action.payload.searchTerm };
+    }
     default:
       return state;
   }
