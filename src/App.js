@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import TasksPage from './components/TasksPage';
 import { connect, useSelector } from 'react-redux';
 import { createTask, editTask, fetchTasks } from './actions/index';
+import FlashMessage from './components/FlashMessage';
 
 // const App = (props) => {
 //   const tasks = useSelector((state) => state.tasks);
@@ -24,6 +25,7 @@ class App extends Component {
   };
 
   onStatusChange = (id, status) => {
+    // convention 1; always wraps your data within a {} other than the id
     this.props.dispatch(editTask(id, { status }));
   };
 
@@ -33,21 +35,33 @@ class App extends Component {
   }
 
   render() {
+    console.log('App mounted', 'loading status:', this.props.isLoading);
+    if (this.props.isLoading) {
+      return <div>Loading</div>;
+    }
+
     return (
-      <div className="main­content">
-        <TasksPage
-          tasks={this.props.tasks}
-          onCreateTask={this.onCreateTask}
-          onStatusChange={this.onStatusChange}
-        />
+      <div>
+        {this.props.error && <FlashMessage message={this.props.error} />}
+        <div className="main­content">
+          <TasksPage
+            tasks={this.props.tasks}
+            onCreateTask={this.onCreateTask}
+            onStatusChange={this.onStatusChange}
+          />
+        </div>
       </div>
     );
   }
 }
 
 const mapStateToProps = (state) => {
+  const { tasks, isLoading, error } = state.tasks;
+
   return {
-    tasks: state.tasks,
+    tasks,
+    isLoading,
+    error,
   };
 };
 

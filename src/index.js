@@ -3,12 +3,26 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import { createStore, applyMiddleware } from 'redux';
-import tasks from './reducers';
+import tasksReducer from './reducers';
 import { Provider } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 
-const store = createStore(tasks, composeWithDevTools(applyMiddleware(thunk)));
+const rootReducer = (state = {}, action) => {
+  // run from the rootReducer to slice reducer
+  // pass the undefined at the beginning;
+  // taskReducer takes the undefined and immediates set the slice state to
+  // {tasks:[],isLoading:false}
+  console.log('root reducer starts');
+  return {
+    tasks: tasksReducer(state.tasks, action),
+  };
+};
+
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(applyMiddleware(thunk))
+);
 
 const mockTasks = [
   {

@@ -13,3 +13,11 @@ export function fetchTasks() {
 export function createTask(params) {
   return client.post('/tasks', params);
 }
+
+// step 2 create the api call function for axios
+
+export function editTask(id, params) {
+  console.log('id api', id);
+  console.log('params api', params);
+  return client.put(`/tasks/${id}`, params);
+}
