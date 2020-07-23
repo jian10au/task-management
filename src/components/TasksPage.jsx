@@ -1,15 +1,15 @@
-import React, { Component } from "react";
-import TaskList from "./TaskList";
-const TASK_STATUSES = ["Unstarted", "In Progress", "Completed"];
+import React, { Component } from 'react';
+import TaskList from './TaskList';
+const TASK_STATUSES = ['Unstarted', 'In Progress', 'Completed'];
 
 class TasksPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showNewCardForm: false,
-      title: "",
-      description: "",
-      searchTerm: "",
+      title: '',
+      description: '',
+      searchTerm: '',
     };
   }
 
@@ -22,8 +22,8 @@ class TasksPage extends Component {
   resetForm() {
     this.setState({
       showNewCardForm: false,
-      title: "",
-      description: "",
+      title: '',
+      description: '',
     });
   }
 
@@ -49,20 +49,41 @@ class TasksPage extends Component {
   renderTaskLists() {
     //basically returns the task whose title matches with the search term store in the state;
     //when you type in the state changes and the this function returns a new list and re-rendered
+    // now the data structure is like this: [{id:1, content:""}, {id:2, content:""}]
+    // the data structure data is from the store and filterd by searchTerm;
 
-    return TASK_STATUSES.map((status) => {
-      const statusTasks = this.props.tasks.filter(
-        (task) => task.status === status
-      );
+    // we want to change it to {'unstarted':[{},{}], 'In progress':[{},{}], 'Completed':[{},{} }
+    const { tasks, onStatusChange } = this.props;
+
+    return Object.keys(tasks).map((status) => {
+      const tasksByStatus = tasks[status];
+      // ok, here we get the array which matches with the current status key
       return (
         <TaskList
           key={status}
           status={status}
-          tasks={statusTasks}
-          onStatusChange={this.props.onStatusChange}
+          tasks={tasksByStatus}
+          onStatusChange={onStatusChange}
         />
       );
     });
+
+    // notice compared with the below status; this is not something that is new; it is just that
+    // the tasks received from the props now carry a different data structure
+
+    // return TASK_STATUSES.map((status) => {
+    //   const statusTasks = this.props.tasks.filter(
+    //     (task) => task.status === status
+    //   );
+    //   return (
+    //     <TaskList
+    //       key={status}
+    //       status={status}
+    //       tasks={statusTasks}
+    //       onStatusChange={this.props.onStatusChange}
+    //     />
+    //   );
+    // });
   }
   render() {
     return (
@@ -97,7 +118,7 @@ class TasksPage extends Component {
           </form>
         )}
         <div
-          style={{ display: "flex", justifyContent: "space-around" }}
+          style={{ display: 'flex', justifyContent: 'space-around' }}
           className="task­-lists"
         >
           {this.renderTaskLists()}

@@ -13,7 +13,7 @@ const rootReducer = (state = {}, action) => {
   // pass the undefined at the beginning;
   // taskReducer takes the undefined and immediates set the slice state to
   // {tasks:[],isLoading:false}
-  console.log('root reducer starts');
+  console.log('root reducer starts and state is ', state);
   return {
     tasks: tasksReducer(state.tasks, action),
   };

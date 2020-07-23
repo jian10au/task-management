@@ -1,10 +1,10 @@
-import * as api from "../api/index";
-import { applyMiddleware } from "redux";
+import * as api from '../api/index';
+import { applyMiddleware } from 'redux';
 // import all available api method
 
 export function filterTasks(searchTerm) {
   return {
-    type: "FILTER_TASKS",
+    type: 'FILTER_TASKS',
     payload: {
       searchTerm,
     },
@@ -13,14 +13,14 @@ export function filterTasks(searchTerm) {
 
 function createTaskSucceeded(task) {
   return {
-    type: "CREATE_TASK_SUCCEEDED",
+    type: 'CREATE_TASK_SUCCEEDED',
     payload: {
       task,
     },
   };
 }
 
-export function createTask({ title, description, status = "Unstarted" }) {
+export function createTask({ title, description, status = 'Unstarted' }) {
   return (dispatch) => {
     api.createTask({ title, description, status }).then((resp) => {
       //you are sure that what gets returned is the task object ? {}
@@ -31,13 +31,13 @@ export function createTask({ title, description, status = "Unstarted" }) {
 
 export function fetchTasksStarted() {
   return {
-    type: "FETCH_TASKS_STARTED",
+    type: 'FETCH_TASKS_STARTED',
   };
 }
 
 export function fetchTasksSucceeded(tasks) {
   return {
-    type: "FETCH_TASKS_SUCCEEDED",
+    type: 'FETCH_TASKS_SUCCEEDED',
     payload: {
       tasks,
     },
@@ -46,7 +46,7 @@ export function fetchTasksSucceeded(tasks) {
 
 export function fetchTasksFailed(error) {
   return {
-    type: "FETCH_TASKS_FAILED",
+    type: 'FETCH_TASKS_FAILED',
     payload: {
       error,
     },
@@ -56,11 +56,11 @@ export function fetchTasksFailed(error) {
 export function fetchTasks() {
   // notice the fetchTasks is initialised by the view
   // but the fetchTasksSucceeded is initialised by the server
-  return (dispatch) => {
+  return (dispatch, getState) => {
     // let the fetchTasksStarted run first
-
+    console.log('dispatch fetchTask started');
     dispatch(fetchTasksStarted());
-
+    console.log('state becomes', getState().tasks);
     api
       .fetchTasks()
       .then((resp) => {
@@ -100,7 +100,7 @@ export function editTask(id, params) {
 
 export function editTaskSucceeded(task) {
   return {
-    type: "EDIT_TASK_SUCCEEDED",
+    type: 'EDIT_TASK_SUCCEEDED',
     payload: {
       task,
     },

@@ -1,8 +1,11 @@
+import { createSelector } from 'reselect';
+import { TASK_STATUSES } from '../constants';
+
 const initialState = {
   tasks: [],
   isLoading: false,
   error: null,
-  searchTerm: "",
+  searchTerm: '',
 };
 
 export default function tasks(state = initialState, action) {
@@ -13,17 +16,17 @@ export default function tasks(state = initialState, action) {
 
   //so when the redux app loads, it will triggers a init action
   switch (action.type) {
-    case "CREATE_TASK":
+    case 'CREATE_TASK':
       return { tasks: state.tasks.concat(action.payload) };
 
-    case "FETCH_TASKS_STARTED": {
+    case 'FETCH_TASKS_STARTED': {
       return {
         ...state,
         isLoading: true,
       };
     }
 
-    case "FETCH_TASKS_SUCCEEDED": {
+    case 'FETCH_TASKS_SUCCEEDED': {
       return {
         ...state,
         isLoading: false,
@@ -31,7 +34,7 @@ export default function tasks(state = initialState, action) {
       };
     }
 
-    case "FETCH_TASKS_FAILED": {
+    case 'FETCH_TASKS_FAILED': {
       return {
         ...state,
         isLoading: false,
@@ -39,7 +42,7 @@ export default function tasks(state = initialState, action) {
       };
     }
 
-    case "CREATE_TASK_SUCCEEDED": {
+    case 'CREATE_TASK_SUCCEEDED': {
       return {
         // no flag set in here indicating no setting flag for create-task at first
         ...state,
@@ -47,7 +50,7 @@ export default function tasks(state = initialState, action) {
       };
     }
 
-    case "EDIT_TASK_SUCCEEDED": {
+    case 'EDIT_TASK_SUCCEEDED': {
       return {
         tasks: state.tasks.map((task) => {
           if (task.id === action.payload.task.id) {
@@ -58,10 +61,41 @@ export default function tasks(state = initialState, action) {
       };
     }
 
-    case "FILTER_TASKS": {
+    case 'FILTER_TASKS': {
       return { ...state, searchTerm: action.payload.searchTerm };
     }
     default:
       return state;
   }
 }
+
+// the logic of get the state from the store and then transform the shape of the data
+// which will be ready for the view to use is called selector function
+// in this case, both tasks and searchTerm will be extracted out from the store
+
+//input selector listed below
+const getTasks = (state) => state.tasks.tasks;
+const getSearchTerm = (state) => state.tasks.searchTerm;
+
+export const getFilteredTasks = createSelector(
+  [getTasks, getSearchTerm],
+  (tasks, searchTerm) => {
+    console.log('selector runs');
+    return tasks.filter((task) =>
+      task.title.match(new RegExp(searchTerm, 'i'))
+    );
+  }
+);
+
+export const getGroupedAndFilteredTasks = createSelector(
+  [getFilteredTasks],
+  (tasks) => {
+    const grouped = {};
+    TASK_STATUSES.forEach((status) => {
+      grouped[status] = tasks.filter((task) => task.status === status);
+    });
+    return grouped;
+  }
+);
+
+// what gets returned from above will be further used by the view

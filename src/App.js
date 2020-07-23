@@ -1,8 +1,9 @@
-import React, { Component } from "react";
-import TasksPage from "./components/TasksPage";
-import { connect, useSelector } from "react-redux";
-import { createTask, editTask, fetchTasks, filterTasks } from "./actions/index";
-import FlashMessage from "./components/FlashMessage";
+import React, { Component } from 'react';
+import TasksPage from './components/TasksPage';
+import { connect, useSelector } from 'react-redux';
+import { createTask, editTask, fetchTasks, filterTasks } from './actions/index';
+import FlashMessage from './components/FlashMessage';
+import { getFilteredTasks, getGroupedAndFilteredTasks } from './reducers';
 
 // const App = (props) => {
 //   const tasks = useSelector((state) => state.tasks);
@@ -35,12 +36,12 @@ class App extends Component {
   };
 
   componentDidMount() {
-    console.log("mount and logged");
+    console.log('mount and ready to dispatch action');
     this.props.dispatch(fetchTasks());
   }
 
   render() {
-    console.log("App mounted", "loading status:", this.props.isLoading);
+    console.log('rendered');
     if (this.props.isLoading) {
       return <div>Loading</div>;
     }
@@ -62,14 +63,28 @@ class App extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const { isLoading, error, searchTerm } = state.tasks;
+  //glue component props with the redux store key
+  const { isLoading, error } = state.tasks;
 
   // the stage where we prepare the data for rendering is called selecting process
   // in this case; the shape of the redux stroe does not have
-  const tasks = state.tasks.tasks.filter((task) => {
-    return task.title.match(new RegExp(searchTerm, "i"));
-  });
 
+  // notice, in this case, I basically remove the requirement that you need to pass a specific slide of the
+  // state to the selector, and let the selector go only handling the overall state;
+
+  // notice, in here the original shape of the store is [{id:1, task:''},{id:2, task:''},{id:3, task:''}]
+
+  const tasks = getGroupedAndFilteredTasks(state);
+
+  // getFilteredTasks is a selector;
+  // it gets the series of tasks from the redux store
+  // filter out the task whose title is not matching with the searchTerm and return the remaining tasks
+  // selected result back to the view for view to render:
+  // the resultant tasks is an array const tasks = [{},{}]
+
+  // by convention, the selector function is stored in the same place as the reducers
+
+  console.log('mapStateToProps runs', tasks);
   return {
     tasks,
     isLoading,
