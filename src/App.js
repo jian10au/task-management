@@ -1,9 +1,15 @@
-import React, { Component } from 'react';
-import TasksPage from './components/TasksPage';
-import { connect, useSelector } from 'react-redux';
-import { createTask, editTask, fetchTasks, filterTasks } from './actions/index';
-import FlashMessage from './components/FlashMessage';
-import { getFilteredTasks, getGroupedAndFilteredTasks } from './reducers';
+import React, { Component } from "react";
+import TasksPage from "./components/TasksPage";
+import { connect, useSelector } from "react-redux";
+import {
+  createTask,
+  editTask,
+  fetchTasks,
+  filterTasks,
+  fetchProjects,
+} from "./actions/index";
+import FlashMessage from "./components/FlashMessage";
+import { getFilteredTasks, getGroupedAndFilteredTasks } from "./reducers";
 
 // const App = (props) => {
 //   const tasks = useSelector((state) => state.tasks);
@@ -36,12 +42,15 @@ class App extends Component {
   };
 
   componentDidMount() {
-    console.log('mount and ready to dispatch action');
-    this.props.dispatch(fetchTasks());
+    console.log("mount and ready to dispatch action");
+    // this.props.dispatch(fetchTasks());
+
+    // step 1
+    this.props.dispatch(fetchProjects());
   }
 
   render() {
-    console.log('rendered');
+    console.log("rendered");
     if (this.props.isLoading) {
       return <div>Loading</div>;
     }
@@ -84,7 +93,7 @@ const mapStateToProps = (state) => {
 
   // by convention, the selector function is stored in the same place as the reducers
 
-  console.log('mapStateToProps runs', tasks);
+  console.log("mapStateToProps runs", tasks);
   return {
     tasks,
     isLoading,

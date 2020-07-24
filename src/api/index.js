@@ -21,3 +21,7 @@ export function editTask(id, params) {
   console.log("params api", params);
   return client.put(`/tasks/${id}`, params);
 }
+
+export function fetchProjects() {
+  return client.get("/projects?_embed=tasks");
+}
