@@ -1,6 +1,7 @@
 import * as api from "../api/index";
 import { applyMiddleware } from "redux";
 // import all available api method
+import { normalize, schema } from "normalizr";
 
 export function filterTasks(searchTerm) {
   return {
@@ -20,9 +21,14 @@ function createTaskSucceeded(task) {
   };
 }
 
-export function createTask({ title, description, status = "Unstarted" }) {
+export function createTask({
+  projectId,
+  title,
+  description,
+  status = "Unstarted",
+}) {
   return (dispatch) => {
-    api.createTask({ title, description, status }).then((resp) => {
+    api.createTask({ projectId, title, description, status }).then((resp) => {
       //you are sure that what gets returned is the task object ? {}
       dispatch(createTaskSucceeded(resp.data));
     });
@@ -81,13 +87,22 @@ export function editTask(id, params) {
 
   return (dispatch, getState) => {
     // a. find task from the state
-    const task = getState().tasks.tasks.find((task) => task.id === id);
-
+    let foundTask;
+    getState().projects.items.forEach((project) => {
+      project.tasks.forEach((task) => {
+        console.log(task, "within editTask");
+        console.log(id, "id within editTask");
+        if (task.id == id) {
+          foundTask = task;
+        }
+      });
+    });
+    console.log("foundTask is :", foundTask);
     // b. construct a update task
 
     // notice, the params in here is {status:"value"}, effectively the object syntax blow construct a new task
     // with the updated value of status
-    const updateTask = Object.assign({}, task, params);
+    const updateTask = Object.assign({}, foundTask, params);
     console.log(updateTask);
     // c. call the api
     api
@@ -129,5 +144,12 @@ export function fetchProjects() {
         console.error(err);
         fetchProjectsFailed(err);
       });
+  };
+}
+
+export function setCurrentProjectId(id) {
+  return {
+    type: "SET_CURRENT_PROJECT_ID",
+    payload: { id },
   };
 }

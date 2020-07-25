@@ -7,9 +7,11 @@ import {
   fetchTasks,
   filterTasks,
   fetchProjects,
+  setCurrentProjectId,
 } from "./actions/index";
 import FlashMessage from "./components/FlashMessage";
 import { getFilteredTasks, getGroupedAndFilteredTasks } from "./reducers";
+import Header from "./components/Header";
 
 // const App = (props) => {
 //   const tasks = useSelector((state) => state.tasks);
@@ -28,7 +30,10 @@ class App extends Component {
   // {title, description} -- create
   // {status} which will be {params:{status:status}} within the action - edit
   onCreateTask = ({ title, description }) => {
-    this.props.dispatch(createTask({ title, description }));
+    // add curent projectid in here
+    const { projectId } = this.props;
+    console.log("projectId in onCreateTask :", projectId);
+    this.props.dispatch(createTask({ projectId, title, description }));
   };
 
   onStatusChange = (id, status) => {
@@ -38,7 +43,12 @@ class App extends Component {
 
   onSearch = (searchTerm) => {
     // console.log(searchTerm);
+    console.log("onSearch runs");
     this.props.dispatch(filterTasks(searchTerm));
+  };
+
+  onCurrentProjectChange = (e) => {
+    this.props.dispatch(setCurrentProjectId(Number(e.target.value)));
   };
 
   componentDidMount() {
@@ -59,6 +69,10 @@ class App extends Component {
       <div>
         {this.props.error && <FlashMessage message={this.props.error} />}
         <div className="main­content">
+          <Header
+            projects={this.props.projects}
+            onCurrentProjectChange={this.onCurrentProjectChange}
+          />
           <TasksPage
             tasks={this.props.tasks}
             onCreateTask={this.onCreateTask}
@@ -73,8 +87,8 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
   //glue component props with the redux store key
-  const { isLoading, error } = state.tasks;
-
+  const { isLoading, error, items } = state.projects;
+  const { currentProjectId } = state.page;
   // the stage where we prepare the data for rendering is called selecting process
   // in this case; the shape of the redux stroe does not have
 
@@ -86,6 +100,9 @@ const mapStateToProps = (state) => {
   const tasks = getGroupedAndFilteredTasks(state);
 
   // getFilteredTasks is a selector;
+  // notice, in my current implementation the tasks is no longer a store property
+  // you need to get tasks by taking additional measures
+
   // it gets the series of tasks from the redux store
   // filter out the task whose title is not matching with the searchTerm and return the remaining tasks
   // selected result back to the view for view to render:
@@ -94,7 +111,10 @@ const mapStateToProps = (state) => {
   // by convention, the selector function is stored in the same place as the reducers
 
   console.log("mapStateToProps runs", tasks);
+  console.log(currentProjectId, "does app have projectId");
   return {
+    projects: items,
+    projectId: currentProjectId,
     tasks,
     isLoading,
     error,
